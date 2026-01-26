@@ -1,4 +1,4 @@
-from trig import trig, Degrees, Radians, Coords
+from ArcTrigH import trig, Degrees, Radians, Coords
 
 if __name__ == "__main__":
     """Example Usage:"""
