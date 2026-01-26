@@ -1,30 +1,40 @@
 from __future__ import annotations
 import cmath
+from math import pi
 import numpy as np
 from functools import wraps
 from numbers import Real
+from dataclasses import dataclass
 
-def complex2real(function):
+class Constants():
+    IMAG_TOLERANCE = 1e-12
+    d2r = pi/180
+    r2d = 180/pi
+
+def parseComplex(function):
+    """Converts real-valued results to Radians.
+        If the underlying function returns a complex value with a non-negligible
+        imaginary part, the complex value is returned unchanged."""
     @wraps(function)
-    def wrapper(x):
+    def wrapper(x) -> Radians | complex:
         y = function(x)
-        if isinstance(x, Real):
-            if abs(y.imag) < 1e-12:
-                return y.real
+        if isinstance(y, complex) and abs(y.imag) < Constants.IMAG_TOLERANCE:
+            return Radians(y.real)
+        if isinstance(y, Real):
+            return Radians(y)
         return y
     return wrapper
 
-def listFuncs():
-    for attr_name in dir(Functions):
-        attr = getattr(Functions, attr_name)
+def listFuncs(cls: type):
+    for attr_name in dir(cls):
+        if attr_name.startswith("_"):
+            continue
+        attr = getattr(cls, attr_name)
         if callable(attr):
             print(attr_name)
 
-class Constants():
-    d2r = cmath.pi/180
-    r2d = 180/cmath.pi
-
 class Radians(float):
+    __slots__ = ()
     def __new__(cls, value: float):
         return super().__new__(cls, value)
     
@@ -32,374 +42,375 @@ class Radians(float):
         return Degrees(self * Constants.r2d)
 
 class Degrees(float):
+    __slots__ = ()
     def __new__(cls, value: float):
         return super().__new__(cls, value)
 
     def to_radians(self) -> Radians:
         return Radians(self * Constants.d2r)
-    
-class Coords():
-    def __init__(self, value: tuple[int|float, int|float]):
-        self.x = value[0]
-        self.y = value[1]
+
+@dataclass
+class Coords:
+    x: float
+    y: float
 
 class Basic():
     """Basic Functions:"""
     @staticmethod
-    @complex2real
-    def sin(x: Radians) -> float:
+    @parseComplex
+    def sin(x: Radians) -> float | complex:
         return cmath.sin(x)
     
     @staticmethod
-    @complex2real
-    def cos(x: Radians) -> float:
+    @parseComplex
+    def cos(x: Radians) -> float | complex:
         return cmath.cos(x)
     
     @staticmethod
-    @complex2real
-    def tan(x: Radians) -> float:
+    @parseComplex
+    def tan(x: Radians) -> float | complex:
         return cmath.tan(x)
     
     @staticmethod
-    @complex2real
-    def cosecant(x: Radians) -> float:
+    @parseComplex
+    def cosecant(x: Radians) -> float | complex:
         return 1 / cmath.sin(x)
     
     @staticmethod
-    @complex2real
-    def secant(x: Radians) -> float:
+    @parseComplex
+    def secant(x: Radians) -> float | complex:
         return 1 / cmath.cos(x)
     
     @staticmethod
-    @complex2real
-    def cotan(x: Radians) -> float:
+    @parseComplex
+    def cot(x: Radians) -> float | complex:
         return 1 / cmath.tan(x)
 
 class Inverse():
     """Inverse Functions:"""
     @staticmethod
-    @complex2real
-    def arcsin(x: float) -> Radians:
+    @parseComplex
+    def arcsin(x: float) -> Radians | complex:
         return cmath.asin(x)
     
     @staticmethod
-    @complex2real
-    def arccos(x: float) -> Radians:
+    @parseComplex
+    def arccos(x: float) -> Radians | complex:
         return cmath.acos(x)
     
     @staticmethod
-    @complex2real
-    def arctan(x: float) -> Radians:
+    @parseComplex
+    def arctan(x: float) -> Radians | complex:
         return cmath.atan(x)
     
     @staticmethod
-    @complex2real
-    def arccosecant(x: float) -> Radians:
+    @parseComplex
+    def arccosecant(x: float) -> Radians | complex:
         return cmath.asin(1 / x)
     
     @staticmethod
-    @complex2real
-    def arcsecant(x: float) -> Radians:
+    @parseComplex
+    def arcsecant(x: float) -> Radians | complex:
         y = cmath.acos(1 / x)
         if y.real < 0:
             return y + cmath.tau
         return y
     
     @staticmethod
-    @complex2real
-    def arccotan(x: float) -> Radians:
-        return cmath.pi / 2 - cmath.atan(x)
+    @parseComplex
+    def arccot(x: float | complex) -> Radians | complex:
+        return pi / 2 - cmath.atan(x)
 
 class Hyperbolic():
     """Hyperbolic Functions:"""
     @staticmethod
-    @complex2real
-    def sinH(x: Radians) -> float:
+    @parseComplex
+    def sinH(x: Radians) -> float | complex:
         return cmath.sinh(x)
     
     @staticmethod
-    @complex2real
-    def cosH(x: Radians) -> float:
+    @parseComplex
+    def cosH(x: Radians) -> float | complex:
         return cmath.cosh(x)
     
     @staticmethod
-    @complex2real
-    def tanH(x: Radians) -> float:
+    @parseComplex
+    def tanH(x: Radians) -> float | complex:
         return cmath.tanh(x)
     
     @staticmethod
-    @complex2real
-    def cosecantH(x: Radians) -> float:
+    @parseComplex
+    def cosecantH(x: Radians) -> float | complex:
         return 1 / cmath.sinh(x)
     
     @staticmethod
-    @complex2real
-    def secantH(x: Radians) -> float:
+    @parseComplex
+    def secantH(x: Radians) -> float | complex:
         return 1 / cmath.cosh(x)
     
     @staticmethod
-    @complex2real
-    def cotanH(x: Radians) -> float:
+    @parseComplex
+    def cotanH(x: Radians) -> float | complex:
         return 1 / cmath.tanh(x)
 
 class InverseHyperbolic():
     """Inverse Hyperbolic Functions:"""
     @staticmethod
-    @complex2real
-    def arcsinH(x: Radians) -> float:
+    @parseComplex
+    def arcsinH(x: float) -> float | complex:
         return cmath.asinh(x)
     
     @staticmethod
-    @complex2real
-    def arccosH(x: Radians) -> float:
+    @parseComplex
+    def arccosH(x: float) -> float | complex:
         return cmath.acosh(x)
     
     @staticmethod
-    @complex2real
-    def arctanH(x: Radians) -> float:
+    @parseComplex
+    def arctanH(x: float) -> float | complex:
         return cmath.atanh(x)
     
     @staticmethod
-    @complex2real
-    def arccosecantH(x: Radians) -> float:
+    @parseComplex
+    def arccosecantH(x: float) -> float | complex:
         return cmath.asinh(1 / x)
     
     @staticmethod
-    @complex2real
-    def arcsecantH(x: Radians) -> float:
+    @parseComplex
+    def arcsecantH(x: float) -> float | complex:
         return cmath.acosh(1 / x)
     
     @staticmethod
-    @complex2real
-    def arccotanH(x: Radians) -> float:
+    @parseComplex
+    def arccotanH(x: float) -> float | complex:
         return cmath.atanh(1 / x)
 
 class Advanced():
     """Advanced Functions:"""
     @staticmethod
-    @complex2real
-    def versine(x: Radians) -> float:
+    @parseComplex
+    def versine(x: Radians) -> float | complex:
         return 1 - cmath.cos(x)
     
     @staticmethod
-    @complex2real
-    def coversine(x: Radians) -> float:
+    @parseComplex
+    def coversine(x: Radians) -> float | complex:
         return 1 - cmath.sin(x)
     
     @staticmethod
-    @complex2real
-    def vercosine(x: Radians) -> float:
+    @parseComplex
+    def vercosine(x: Radians) -> float | complex:
         return 1 + cmath.cos(x)
     
     @staticmethod
-    @complex2real
-    def covercosine(x: Radians) -> float:
+    @parseComplex
+    def covercosine(x: Radians) -> float | complex:
         return 1 + cmath.sin(x)
     
     @staticmethod
-    @complex2real
-    def haversine(x: Radians) -> float:
+    @parseComplex
+    def haversine(x: Radians) -> float | complex:
         return (1 - cmath.cos(x)) / 2
     
     @staticmethod
-    @complex2real
-    def hacoversine(x: Radians) -> float:
+    @parseComplex
+    def hacoversine(x: Radians) -> float | complex:
         return (1 - cmath.sin(x)) / 2
     
     @staticmethod
-    @complex2real
-    def havercosine(x: Radians) -> float:
+    @parseComplex
+    def havercosine(x: Radians) -> float | complex:
         return (1 + cmath.cos(x)) / 2
     
     @staticmethod
-    @complex2real
-    def hacovercosine(x: Radians) -> float:
+    @parseComplex
+    def hacovercosine(x: Radians) -> float | complex:
         return (1 + cmath.sin(x)) / 2
     
     @staticmethod
-    @complex2real
-    def exsecant(x: Radians) -> float:
+    @parseComplex
+    def exsecant(x: Radians) -> float | complex:
         return 1 / cmath.cos(x) - 1
     
     @staticmethod
-    @complex2real
-    def excosecant(x: Radians) -> float:
+    @parseComplex
+    def excosecant(x: Radians) -> float | complex:
         return 1 / cmath.sin(x) - 1
     
     @staticmethod
-    @complex2real
-    def chord(x: Radians) -> float:
+    @parseComplex
+    def chord(x: Radians) -> float | complex:
         return 2 * cmath.sin(x / 2)
 
 class InverseAdvanced():
     """Inverse Advanced Functions:"""
     @staticmethod
-    @complex2real
-    def arcversine(x: Radians) -> float:
+    @parseComplex
+    def arcversine(x: Radians) -> Radians | complex:
         return cmath.acos(1 - x)
     
     @staticmethod
-    @complex2real
-    def arccoversine(x: Radians) -> float:
+    @parseComplex
+    def arccoversine(x: Radians) -> Radians | complex:
         return cmath.asin(1 - x)
     
     @staticmethod
-    @complex2real
-    def arcvercosine(x: Radians) -> float:
+    @parseComplex
+    def arcvercosine(x: Radians) -> Radians | complex:
         return cmath.acos(x - 1)
     
     @staticmethod
-    @complex2real
-    def arccovercosine(x: Radians) -> float:
+    @parseComplex
+    def arccovercosine(x: Radians) -> Radians | complex:
         return cmath.asin(x - 1)
     
     @staticmethod
-    @complex2real
-    def archaversine(x: Radians) -> float:
+    @parseComplex
+    def archaversine(x: Radians) -> Radians | complex:
         return cmath.acos(1 - 2 * x)
     
     @staticmethod
-    @complex2real
-    def archacoversine(x: Radians) -> float:
+    @parseComplex
+    def archacoversine(x: Radians) -> Radians | complex:
         return cmath.asin(1 - 2 * x)
     
     @staticmethod
-    @complex2real
-    def archavercosine(x: Radians) -> float:
+    @parseComplex
+    def archavercosine(x: Radians) -> Radians | complex:
         return cmath.acos(2 * x - 1)
     
     @staticmethod
-    @complex2real
-    def archacovercosine(x: Radians) -> float:
+    @parseComplex
+    def archacovercosine(x: Radians) -> Radians | complex:
         return cmath.asin(2 * x - 1)
     
     @staticmethod
-    @complex2real
-    def arcexsecant(x: Radians) -> float:
+    @parseComplex
+    def arcexsecant(x: Radians) -> Radians | complex:
         return cmath.acos(1 / (x + 1))
     
     @staticmethod
-    @complex2real
-    def arcexcosecant(x: Radians) -> float:
+    @parseComplex
+    def arcexcosecant(x: Radians) -> Radians | complex:
         return cmath.asin(1 / (x + 1))
     
     @staticmethod
-    @complex2real
-    def arcchord(x: Radians) -> float:
+    @parseComplex
+    def arcchord(x: Radians) -> Radians | complex:
         return cmath.asin(x / 2) * 2
 
 class HyperbolicAdvanced():
     """Hyperbolic Advanced Functions:"""
     @staticmethod
-    @complex2real
-    def versineH(x: Radians) -> float:
+    @parseComplex
+    def versineH(x: Radians) -> float | complex:
         return 1 - cmath.cosh(x)
     
     @staticmethod
-    @complex2real
-    def coversineH(x: Radians) -> float:
+    @parseComplex
+    def coversineH(x: Radians) -> float | complex:
         return 1 - cmath.sinh(x)
     
     @staticmethod
-    @complex2real
-    def vercosineH(x: Radians) -> float:
+    @parseComplex
+    def vercosineH(x: Radians) -> float | complex:
         return 1 + cmath.cosh(x)
     
     @staticmethod
-    @complex2real
-    def covercosineH(x: Radians) -> float:
+    @parseComplex
+    def covercosineH(x: Radians) -> float | complex:
         return 1 + cmath.sinh(x)
     
     @staticmethod
-    @complex2real
-    def haversineH(x: Radians) -> float:
+    @parseComplex
+    def haversineH(x: Radians) -> float | complex:
         return (1 - cmath.cosh(x)) / 2
     
     @staticmethod
-    @complex2real
-    def hacoversineH(x: Radians) -> float:
+    @parseComplex
+    def hacoversineH(x: Radians) -> float | complex:
         return (1 - cmath.sinh(x)) / 2
     
     @staticmethod
-    @complex2real
-    def havercosineH(x: Radians) -> float:
+    @parseComplex
+    def havercosineH(x: Radians) -> float | complex:
         return (1 + cmath.cosh(x)) / 2
     
     @staticmethod
-    @complex2real
-    def hacovercosineH(x: Radians) -> float:
+    @parseComplex
+    def hacovercosineH(x: Radians) -> float | complex:
         return (1 + cmath.sinh(x)) / 2
     
     @staticmethod
-    @complex2real
-    def exsecantH(x: Radians) -> float:
+    @parseComplex
+    def exsecantH(x: Radians) -> float | complex:
         return 1 / cmath.cosh(x) - 1
     
     @staticmethod
-    @complex2real
-    def excosecantH(x: Radians) -> float:
+    @parseComplex
+    def excosecantH(x: Radians) -> float | complex:
         return 1 / cmath.sinh(x) - 1
     
     @staticmethod
-    @complex2real
-    def chordH(x: Radians) -> float:
+    @parseComplex
+    def chordH(x: Radians) -> float | complex:
         return 2 * cmath.sinh(x/2)
 
 class InverseHyperbolicAdvanced():
     """Inverse Hyperbolic Advanced Functions:"""
     @staticmethod
-    @complex2real
-    def arcversineH(x: Radians) -> float:
+    @parseComplex
+    def arcversineH(x: Radians) -> Radians | complex:
         return cmath.acosh(1 - x)
     
     @staticmethod
-    @complex2real
-    def arccoversineH(x: Radians) -> float:
+    @parseComplex
+    def arccoversineH(x: Radians) -> Radians | complex:
         return cmath.asinh(1 - x)
     
     @staticmethod
-    @complex2real
-    def arcvercosineH(x: Radians) -> float:
+    @parseComplex
+    def arcvercosineH(x: Radians) -> Radians | complex:
         return cmath.acosh(x - 1)
     
     @staticmethod
-    @complex2real
-    def arccovercosineH(x: Radians) -> float:
+    @parseComplex
+    def arccovercosineH(x: Radians) -> Radians | complex:
         return cmath.asinh(x - 1)
     
     @staticmethod
-    @complex2real
-    def archaversineH(x: Radians) -> float:
+    @parseComplex
+    def archaversineH(x: Radians) -> Radians | complex:
         return cmath.acosh(1 - 2 * x)
     
     @staticmethod
-    @complex2real
-    def archacoversineH(x: Radians) -> float:
+    @parseComplex
+    def archacoversineH(x: Radians) -> Radians | complex:
         return cmath.asinh(1 - 2 * x)
     
     @staticmethod
-    @complex2real
-    def archavercosineH(x: Radians) -> float:
+    @parseComplex
+    def archavercosineH(x: Radians) -> Radians | complex:
         return cmath.acosh(2 * x - 1)
     
     @staticmethod
-    @complex2real
-    def archacovercosineH(x: Radians) -> float:
+    @parseComplex
+    def archacovercosineH(x: Radians) -> Radians | complex:
         return cmath.asinh(2 * x - 1)
     
     @staticmethod
-    @complex2real
-    def arcexsecantH(x: Radians) -> float:
+    @parseComplex
+    def arcexsecantH(x: Radians) -> Radians | complex:
         return cmath.acosh(1 / (x + 1))
     
     @staticmethod
-    @complex2real
-    def arcexcosecantH(x: Radians) -> float:
+    @parseComplex
+    def arcexcosecantH(x: Radians) -> Radians | complex:
         return cmath.asinh(1 / (x + 1))
     
     @staticmethod
-    @complex2real
-    def arcchordH(x: Radians) -> float:
+    @parseComplex
+    def arcchordH(x: Radians) -> Radians | complex:
         m = cmath.sqrt(2 * x**2 + 1)
 
         v = cmath.log((1 + m + cmath.sqrt(2 * (x**2 + m - 1))) / 2)
@@ -419,9 +430,13 @@ class Functions(Basic,
     """Special Functions:"""
     @staticmethod
     def arctan2(coords: Coords) -> Radians:
-        return np.atan2(coords.y, coords.x)
+        """Two-argument arctangent. Returns angle in radians in the range (-π, π]."""
+        return Radians(np.atan2(coords.y, coords.x))
 
 if __name__ == "__main__":
     """Example Usage:"""
     radians = Degrees(50).to_radians()
-    print(Functions.cos(radians))
+    cos = Functions.cos(radians)
+    arcsin = Functions.arcsin(cos).to_degrees()
+    print("cosine: ", cos) # 0.6427876096865394
+    print("arcsin: ", arcsin) # 40.00000000000001
