@@ -418,25 +418,28 @@ class InverseHyperbolicAdvanced():
             return -v
         return v
 
-class Functions(Basic,
-                Inverse,
-                Hyperbolic,
-                InverseHyperbolic,
-                Advanced,
-                InverseAdvanced,
-                HyperbolicAdvanced,
-                InverseHyperbolicAdvanced):
+class trig(Basic,
+           Inverse,
+           Hyperbolic,
+           InverseHyperbolic,
+           Advanced,
+           InverseAdvanced,
+           HyperbolicAdvanced,
+           InverseHyperbolicAdvanced):
+    
+    
+    @classmethod
+    def inject(cls):
+        """Inject all static methods into the caller's global namespace. Messes with autocomplete tho"""
+        import inspect
+        caller_globals = inspect.stack()[1].frame.f_globals
+        for name in dir(cls):
+            attr = getattr(cls, name)
+            if callable(attr) and not name.startswith("__"):
+                caller_globals[name] = attr
     
     """Special Functions:"""
     @staticmethod
     def arctan2(coords: Coords) -> Radians:
         """Two-argument arctangent. Returns angle in radians in the range (-π, π]."""
         return Radians(np.atan2(coords.y, coords.x))
-
-if __name__ == "__main__":
-    """Example Usage:"""
-    radians = Degrees(50).to_radians()
-    cos = Functions.cos(radians)
-    arcsin = Functions.arcsin(cos).to_degrees()
-    print("cosine: ", cos) # 0.6427876096865394
-    print("arcsin: ", arcsin) # 40.00000000000001
