@@ -447,9 +447,9 @@ class trig(Basic,
     @staticmethod
     def SolveRightTriangle(side_a=None, side_b=None, side_c=None, angle_a=None, angle_c=None):
         """Solve all missing values for a right triangle based on input.
-        Angle A is adjacent to Sides A and C(hypotenuse), and opposite B
-        Angle B is 90
-        Angle C is adjacent to Sides B and C, and opposite A
+        Angle A is adjacent to Sides A and C(hypotenuse), and opposite B.
+        Angle B is 90.
+        Angle C is adjacent to Sides B and C, and opposite A.
         I simply prefer this convention."""
         if sum(x is not None for x in [side_a, side_b, side_c, angle_a, angle_c]) < 2:
             raise ValueError("At least two values are needed to solve the triangle")
