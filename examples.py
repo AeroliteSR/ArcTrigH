@@ -6,6 +6,7 @@ if __name__ == "__main__":
     cos = trig.cos(radians) # 0.6427876096865394
     arcsin = trig.arcsin(cos).degrees() # 40.00000000000001
 
-    result = trig.SolveRightTriangle(side_a=5, angle_c=23)
+    result = trig.SolveRightTriangle(side_a=22, side_b=68)
+
     for k,v in result.items():
-        print(f"{k} - {v}")
+        print(f"{k} - {v:.3f}")

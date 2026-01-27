@@ -105,7 +105,7 @@ class Inverse():
     
     @staticmethod
     @parseComplex
-    def arccos(x: float) -> Radians | complex:
+    def arccsc(x: float) -> Radians | complex:
         return cmath.asin(1 / x)
     
     @staticmethod
@@ -453,6 +453,9 @@ class trig(Basic,
         I simply prefer this convention."""
         if sum(x is not None for x in [side_a, side_b, side_c, angle_a, angle_c]) < 2:
             raise ValueError("At least two values are needed to solve the triangle")
+        if all(s is None for s in (side_a, side_b, side_c)):
+            print("No sides given, result will be dimensionless ratios relative to a hypotenuse of 1 rather than lengths")
+            side_c = 1.0
     
         # fetch angles based on sides if none are given
         if angle_a is None and angle_c is None:
@@ -473,24 +476,26 @@ class trig(Basic,
         if angle_c is None:
             angle_c = 90 - angle_a
 
-        # get missing sides with pythagoras if 2 are given
-        if side_a is not None and side_b is not None and side_c is None:
-            side_c = sqrt(side_a**2 + side_b**2)
-        elif side_a is not None and side_c is not None and side_b is None:
-            side_b = sqrt(side_c**2 - side_a**2)
-        elif side_b is not None and side_c is not None and side_a is None:
-            side_a = sqrt(side_c**2 - side_b**2)
+        if [side_a, side_b, side_c].count(None) <= 1:
+            # get missing sides with pythagoras if 2 are given
+            if side_a is not None and side_b is not None and side_c is None:
+                side_c = sqrt(side_a**2 + side_b**2)
+            elif side_a is not None and side_c is not None and side_b is None:
+                side_b = sqrt(side_c**2 - side_a**2)
+            elif side_b is not None and side_c is not None and side_a is None:
+                side_a = sqrt(side_c**2 - side_b**2)
 
-        # get missing sides with trig if only 1 is given
-        if side_a is not None and side_b is None and side_c is None:
-            side_b = side_a * trig.tan(Degrees(angle_a).radians())
-            side_c = sqrt(side_a**2 + side_b**2)
-        elif side_b is not None and side_a is None and side_c is None:
-            side_a = side_b * trig.cot(Degrees(angle_a).radians())
-            side_c = sqrt(side_a**2 + side_b**2)
-        elif side_c is not None and side_a is None and side_b is None:
-            side_a = side_c * trig.sin(Degrees(angle_a).radians())
-            side_b = side_c * trig.cos(Degrees(angle_a).radians())
+        else:
+            # get missing sides with trig if only 1 is given (or h is normalized)
+            if side_a is not None and side_b is None and side_c is None:
+                side_b = side_a * trig.tan(Degrees(angle_a).radians())
+                side_c = sqrt(side_a**2 + side_b**2)
+            elif side_b is not None and side_a is None and side_c is None:
+                side_a = side_b * trig.cot(Degrees(angle_a).radians())
+                side_c = sqrt(side_a**2 + side_b**2)
+            elif side_c is not None and side_a is None and side_b is None:
+                side_b = side_c * trig.sin(Degrees(angle_a).radians())
+                side_a = sqrt(side_c**2 - side_b**2)
 
         perimeter = side_a+side_b+side_c
 
