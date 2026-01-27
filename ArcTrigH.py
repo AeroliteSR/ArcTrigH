@@ -464,7 +464,7 @@ class trig(Basic,
                 elif side_a is not None and side_c is not None :
                     angle_a = trig.arcsin(side_a/side_c).degrees()
                 elif side_b is not None and side_c is not None :
-                    angle_a = trig.arcsin(side_b/side_c).degrees()
+                    angle_a = trig.arccos(side_b/side_c).degrees()
                 else:
                     raise ValueError("Not enough sides to determine angles")
                 
@@ -475,6 +475,9 @@ class trig(Basic,
             angle_a = 90 - angle_c
         if angle_c is None:
             angle_c = 90 - angle_a
+
+        if any(not (0 < i < 90) for i in [angle_a, angle_c]):
+            raise ValueError("Angle must be between 0 and 90 degrees")
 
         if [side_a, side_b, side_c].count(None) <= 1:
             # get missing sides with pythagoras if 2 are given
@@ -498,6 +501,7 @@ class trig(Basic,
                 side_a = sqrt(side_c**2 - side_b**2)
 
         perimeter = side_a+side_b+side_c
+        area = side_a*side_b/2
 
         return {"Side A": side_a,
                 "Side B": side_b,
@@ -506,7 +510,7 @@ class trig(Basic,
                 "Angle B": 90,
                 "Angle C": angle_c,
                 "Perimeter": perimeter,
-                "Area": side_a*side_b/2,
-                "Inradius": (side_a*side_b)/perimeter,
+                "Area": area,
+                "Inradius": area*2/perimeter,
                 "Circumradius": side_c/2,
                 "Height": side_a*side_b/side_c}
