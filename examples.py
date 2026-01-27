@@ -1,9 +1,11 @@
-from ArcTrigH import trig, Degrees, Radians, Coords
+from ArcTrigH import trig, Degrees
 
 if __name__ == "__main__":
     """Example Usage:"""
-    radians = Degrees(50).to_radians()
-    cos = trig.cos(radians)
-    arcsin = trig.arcsin(cos).to_degrees()
-    print("cosine: ", cos) # 0.6427876096865394
-    print("arcsin: ", arcsin) # 40.00000000000001
+    radians = Degrees(50).radians()
+    cos = trig.cos(radians) # 0.6427876096865394
+    arcsin = trig.arcsin(cos).degrees() # 40.00000000000001
+
+    result = trig.SolveRightTriangle(side_a=5, angle_c=23)
+    for k,v in result.items():
+        print(f"{k} - {v}")

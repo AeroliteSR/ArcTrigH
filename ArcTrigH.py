@@ -1,6 +1,6 @@
 from __future__ import annotations
 import cmath
-from math import pi
+from math import pi, sqrt
 import numpy as np
 from functools import wraps
 from numbers import Real
@@ -73,12 +73,12 @@ class Basic():
     
     @staticmethod
     @parseComplex
-    def cosecant(x: Radians) -> float | complex:
+    def csc(x: Radians) -> float | complex:
         return 1 / cmath.sin(x)
     
     @staticmethod
     @parseComplex
-    def secant(x: Radians) -> float | complex:
+    def sec(x: Radians) -> float | complex:
         return 1 / cmath.cos(x)
     
     @staticmethod
@@ -105,12 +105,12 @@ class Inverse():
     
     @staticmethod
     @parseComplex
-    def arccosecant(x: float) -> Radians | complex:
+    def arccos(x: float) -> Radians | complex:
         return cmath.asin(1 / x)
     
     @staticmethod
     @parseComplex
-    def arcsecant(x: float) -> Radians | complex:
+    def arcsec(x: float) -> Radians | complex:
         y = cmath.acos(1 / x)
         if y.real < 0:
             return y + cmath.tau
@@ -140,17 +140,17 @@ class Hyperbolic():
     
     @staticmethod
     @parseComplex
-    def cosecantH(x: Radians) -> float | complex:
+    def cscH(x: Radians) -> float | complex:
         return 1 / cmath.sinh(x)
     
     @staticmethod
     @parseComplex
-    def secantH(x: Radians) -> float | complex:
+    def secH(x: Radians) -> float | complex:
         return 1 / cmath.cosh(x)
     
     @staticmethod
     @parseComplex
-    def cotanH(x: Radians) -> float | complex:
+    def cotH(x: Radians) -> float | complex:
         return 1 / cmath.tanh(x)
 
 class InverseHyperbolic():
@@ -172,17 +172,17 @@ class InverseHyperbolic():
     
     @staticmethod
     @parseComplex
-    def arccosecantH(x: float) -> float | complex:
+    def arccscH(x: float) -> float | complex:
         return cmath.asinh(1 / x)
     
     @staticmethod
     @parseComplex
-    def arcsecantH(x: float) -> float | complex:
+    def arcsecH(x: float) -> float | complex:
         return cmath.acosh(1 / x)
     
     @staticmethod
     @parseComplex
-    def arccotanH(x: float) -> float | complex:
+    def arccotH(x: float) -> float | complex:
         return cmath.atanh(1 / x)
 
 class Advanced():
@@ -443,3 +443,65 @@ class trig(Basic,
     def arctan2(coords: Coords) -> Radians:
         """Two-argument arctangent. Returns angle in radians in the range (-π, π]."""
         return Radians(np.atan2(coords.y, coords.x))
+    
+    @staticmethod
+    def SolveRightTriangle(side_a=None, side_b=None, side_c=None, angle_a=None, angle_c=None):
+        """Solve all missing values for a right triangle based on input.
+        Angle A is adjacent to Sides A and C(hypotenuse), and opposite B
+        Angle B is 90
+        Angle C is adjacent to Sides B and C, and opposite A
+        I simply prefer this convention."""
+        if sum(x is not None for x in [side_a, side_b, side_c, angle_a, angle_c]) < 2:
+            raise ValueError("At least two values are needed to solve the triangle")
+    
+        # fetch angles based on sides if none are given
+        if angle_a is None and angle_c is None:
+                if side_a is not None and side_b is not None :
+                    angle_a = trig.arctan(side_b/side_a).degrees()
+                elif side_a is not None and side_c is not None :
+                    angle_a = trig.arcsin(side_a/side_c).degrees()
+                elif side_b is not None and side_c is not None :
+                    angle_a = trig.arcsin(side_b/side_c).degrees()
+                else:
+                    raise ValueError("Not enough sides to determine angles")
+                
+                angle_c = 90 - angle_a
+        
+        # get missing angle if one already exists
+        if angle_a is None:
+            angle_a = 90 - angle_c
+        if angle_c is None:
+            angle_c = 90 - angle_a
+
+        # get missing sides with pythagoras if 2 are given
+        if side_a is not None and side_b is not None and side_c is None:
+            side_c = sqrt(side_a**2 + side_b**2)
+        elif side_a is not None and side_c is not None and side_b is None:
+            side_b = sqrt(side_c**2 - side_a**2)
+        elif side_b is not None and side_c is not None and side_a is None:
+            side_a = sqrt(side_c**2 - side_b**2)
+
+        # get missing sides with trig if only 1 is given
+        if side_a is not None and side_b is None and side_c is None:
+            side_b = side_a * trig.tan(Degrees(angle_a).radians())
+            side_c = sqrt(side_a**2 + side_b**2)
+        elif side_b is not None and side_a is None and side_c is None:
+            side_a = side_b * trig.cot(Degrees(angle_a).radians())
+            side_c = sqrt(side_a**2 + side_b**2)
+        elif side_c is not None and side_a is None and side_b is None:
+            side_a = side_c * trig.sin(Degrees(angle_a).radians())
+            side_b = side_c * trig.cos(Degrees(angle_a).radians())
+
+        perimeter = side_a+side_b+side_c
+
+        return {"Side A": side_a,
+                "Side B": side_b,
+                "Side C": side_c,
+                "Angle A": angle_a,
+                "Angle B": 90,
+                "Angle C": angle_c,
+                "Perimeter": perimeter,
+                "Area": side_a*side_b/2,
+                "Inradius": (side_a*side_b)/perimeter,
+                "Circumradius": side_c/2,
+                "Height": side_a*side_b/side_c}
