@@ -2,6 +2,7 @@ from ArcTrigH import trig
 from math import sqrt
 
 def RightTriangle(side_a=None, side_b=None, side_c=None, angle_a=None, angle_c=None):
+    # fetch angles based on sides if none are given
     if angle_a is None and angle_c is None:
             if side_a is not None and side_c is not None :
                 angle_a = trig.arccosecant(side_c/side_a).degrees()
@@ -14,11 +15,13 @@ def RightTriangle(side_a=None, side_b=None, side_c=None, angle_a=None, angle_c=N
             
             angle_c = 90 - angle_a
     
+    # get missing angle if one already exists
     if angle_a is None:
         angle_a = 90 - angle_c
     if angle_c is None:
         angle_c = 90 - angle_a
 
+    # get missing sides
     if side_a is not None and side_b is not None:
         side_c = sqrt(side_a**2 + side_b**2)
     elif side_a is not None and side_c is not None:
