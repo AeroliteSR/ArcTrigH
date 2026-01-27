@@ -50,8 +50,16 @@ def RightTriangle(side_a=None, side_b=None, side_c=None, angle_a=None, angle_c=N
         angle_a = getAngle('a', side_a, side_b, side_c)
     elif not angle_c:
         angle_c = getAngle('c', side_a, side_b, side_c)
-    print(side_a, side_b, side_c, angle_a, angle_c)
+
+    return {"Side A": side_a,
+            "Side B": side_b,
+            "Side C": side_c,
+            "Angle A": angle_a,
+            "Angle B": 90,
+            "Angle C": angle_c}
         
 
 if __name__ == "__main__": 
-    RightTriangle(side_a=4, side_c=8)
+    result = RightTriangle(side_a=4, side_c=8)
+    for k,v in result.items():
+        print(f'{k} - {v}')
