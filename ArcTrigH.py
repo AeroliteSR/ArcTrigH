@@ -38,7 +38,7 @@ class Radians(float):
     def __new__(cls, value: float):
         return super().__new__(cls, value)
     
-    def to_degrees(self) -> Degrees:
+    def degrees(self) -> Degrees:
         return Degrees(self * Constants.r2d)
 
 class Degrees(float):
@@ -46,7 +46,7 @@ class Degrees(float):
     def __new__(cls, value: float):
         return super().__new__(cls, value)
 
-    def to_radians(self) -> Radians:
+    def radians(self) -> Radians:
         return Radians(self * Constants.d2r)
 
 @dataclass
