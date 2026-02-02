@@ -33,6 +33,18 @@ def listFuncs(cls: type):
         if callable(attr):
             print(attr_name)
 
+def toRadians(obj):
+    if isinstance(obj, complex):
+        print("Degrees are complex, discarding non-real elements.")
+        obj = obj.real
+    return obj * Constants.d2r
+
+def toDegrees(obj):
+    if isinstance(obj, complex):
+        print("Radians are complex, discarding non-real elements.")
+        obj = obj.real
+    return obj * Constants.r2d
+
 class Radians(float):
     __slots__ = ()
     def __new__(cls, value: float):
@@ -519,72 +531,95 @@ class trig(Basic,
         return Radians(np.atan2(coords.y, coords.x))
     
     @staticmethod
-    def SolveRightTriangle(side_a=None, side_b=None, side_c=None, angle_a=None, angle_c=None):
-        """Solve all missing values for a right triangle based on input.
-        Angle A is adjacent to Sides A and C(hypotenuse), and opposite B.
-        Angle B is 90.
-        Angle C is adjacent to Sides B and C, and opposite A.
-        I simply prefer this convention."""
-        if sum(x is not None for x in [side_a, side_b, side_c, angle_a, angle_c]) < 2:
-            raise ValueError("At least two values are needed to solve the triangle")
-        if all(s is None for s in (side_a, side_b, side_c)):
-            print("No sides given, result will be dimensionless ratios relative to a hypotenuse of 1 rather than lengths")
-            side_c = 1.0
-    
-        # fetch angles based on sides if none are given
-        if angle_a is None and angle_c is None:
-                if side_a is not None and side_b is not None :
-                    angle_a = trig.arctan(side_b/side_a).degrees()
-                elif side_a is not None and side_c is not None :
-                    angle_a = trig.arcsin(side_a/side_c).degrees()
-                elif side_b is not None and side_c is not None :
-                    angle_a = trig.arccos(side_b/side_c).degrees()
-                else:
-                    raise ValueError("Not enough sides to determine angles")
-                
-                angle_c = 90 - angle_a
-        
-        # get missing angle if one already exists
+    def SolveTriangle(side_a=None, side_b=None, side_c=None, angle_a=None, angle_b=None, angle_c=None):
+        """Solve all missing values for a triangle based on input.
+        Angle inputs are assumed to be in degrees."""
+
+        sides = [side_a, side_b, side_c]
+        angles = [angle_a, angle_b, angle_c]
+
+        if sum(x is not None for x in sides + angles) < 3:
+            raise ValueError("At least three values are required")
+
+        if all(s is None for s in sides):
+            raise ValueError("At least one side must be provided")
+
+        for s in sides:
+            if s is not None and s <= 0:
+                raise ValueError("Side lengths must be positive")
+
+        for a in angles:
+            if a is not None and not (0 < a < 180):
+                raise ValueError("Angles must be between 0 and 180 degrees")
+
+        # fetch missing angle if 2 are known
+        if angles.count(None) == 1:
+            if angle_a is None:
+                angle_a = 180 - angle_b - angle_c
+            elif angle_b is None:
+                angle_b = 180 - angle_a - angle_c
+            elif angle_c is None:
+                angle_c = 180 - angle_a - angle_b
+
+        # sss/sas
+        if side_a and side_b and side_c:
+            angle_a = trig.arccos((side_b**2 + side_c**2 - side_a**2) / (2 * side_b * side_c)).degrees()
+            angle_b = trig.arccos((side_a**2 + side_c**2 - side_b**2) / (2 * side_a * side_c)).degrees()
+            angle_c = 180 - angle_a - angle_b
+
+        elif side_a and side_b and angle_c:
+            side_c = sqrt(side_a**2 + side_b**2 - 2 * side_a * side_b * trig.cos(Degrees(angle_c).radians()))
+        elif side_a and side_c and angle_b:
+            side_b = sqrt(side_a**2 + side_c**2 - 2 * side_a * side_c * trig.cos(Degrees(angle_b).radians()))
+        elif side_b and side_c and angle_a:
+            side_a = sqrt(side_b**2 + side_c**2 - 2 * side_b * side_c * trig.cos(Degrees(angle_a).radians()))
+
+        # asa/aas
+        if angle_a and angle_b and side_a and side_b is None:
+            side_b = side_a * trig.sin(Degrees(angle_b).radians()) / trig.sin(Degrees(angle_a).radians())
+        if angle_a and angle_c and side_a and side_c is None:
+            side_c = side_a * trig.sin(Degrees(angle_c).radians()) / trig.sin(Degrees(angle_a).radians())
+        if angle_b and angle_c and side_b and side_c is None:
+            side_c = side_b * trig.sin(Degrees(angle_c).radians()) / trig.sin(Degrees(angle_b).radians())
+
+        # get remaining angles
         if angle_a is None:
-            angle_a = 90 - angle_c
+            angle_a = trig.arcsin(side_a * trig.sin(Degrees(angle_b).radians()) / side_b).degrees()
+        if angle_b is None:
+            angle_b = trig.arcsin(side_b * trig.sin(Degrees(angle_a).radians()) / side_a).degrees()
         if angle_c is None:
-            angle_c = 90 - angle_a
+            angle_c = 180 - angle_a - angle_b
 
-        if any(not (0 < i < 90) for i in [angle_a, angle_c]):
-            raise ValueError("Angle must be between 0 and 90 degrees")
+        # get remaining sides
+        if side_a is None:
+            side_a = side_b * trig.sin(Degrees(angle_a).radians()) / trig.sin(Degrees(angle_b).radians())
+        if side_b is None:
+            side_b = side_a * trig.sin(Degrees(angle_b).radians()) / trig.sin(Degrees(angle_a).radians())
+        if side_c is None:
+            side_c = side_a * trig.sin(Degrees(angle_c).radians()) / trig.sin(Degrees(angle_a).radians())
 
-        if [side_a, side_b, side_c].count(None) <= 1:
-            # get missing sides with pythagoras if 2 are given
-            if side_a is not None and side_b is not None and side_c is None:
-                side_c = sqrt(side_a**2 + side_b**2)
-            elif side_a is not None and side_c is not None and side_b is None:
-                side_b = sqrt(side_c**2 - side_a**2)
-            elif side_b is not None and side_c is not None and side_a is None:
-                side_a = sqrt(side_c**2 - side_b**2)
+        # validation
+        if angle_a + angle_b + angle_c > 180.000001:
+            raise ValueError("Invalid triangle geometry")
 
-        else:
-            # get missing sides with trig if only 1 is given (or h is normalized)
-            if side_a is not None and side_b is None and side_c is None:
-                side_b = side_a * trig.tan(Degrees(angle_a).radians())
-                side_c = sqrt(side_a**2 + side_b**2)
-            elif side_b is not None and side_a is None and side_c is None:
-                side_a = side_b * trig.cot(Degrees(angle_a).radians())
-                side_c = sqrt(side_a**2 + side_b**2)
-            elif side_c is not None and side_a is None and side_b is None:
-                side_b = side_c * trig.sin(Degrees(angle_a).radians())
-                side_a = sqrt(side_c**2 - side_b**2)
+        # derive extra values
+        perimeter = side_a + side_b + side_c
+        s = perimeter / 2
+        area = sqrt(s * (s - side_a) * (s - side_b) * (s - side_c))
 
-        perimeter = side_a+side_b+side_c
-        area = side_a*side_b/2
+        return {
+            "Side A": side_a,
+            "Side B": side_b,
+            "Side C": side_c,
+            "Angle A": angle_a,
+            "Angle B": angle_b,
+            "Angle C": angle_c,
+            "Perimeter": perimeter,
+            "Area": area,
+            "Inradius": area / s,
+            "Circumradius": side_a / (2 * trig.sin(Degrees(angle_a).radians()))
+        }
 
-        return {"Side A": side_a,
-                "Side B": side_b,
-                "Side C": side_c,
-                "Angle A": angle_a,
-                "Angle B": 90,
-                "Angle C": angle_c,
-                "Perimeter": perimeter,
-                "Area": area,
-                "Inradius": area*2/perimeter,
-                "Circumradius": side_c/2,
-                "Height": side_a*side_b/side_c}
+    
+if __name__ == "__main__":
+    print(trig.SolveTriangle(angle_a=24, angle_b=90, side_a=5))
