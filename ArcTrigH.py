@@ -542,7 +542,8 @@ class trig(Basic,
             raise ValueError("At least three values are required")
 
         if all(s is None for s in sides):
-            raise ValueError("At least one side must be provided")
+            print("No sides given. Result will be in a ratio to a hypotenuse of 1.")
+            side_c = 1
 
         for s in sides:
             if s is not None and s <= 0:
