@@ -563,18 +563,18 @@ class trig(Basic,
                 angle_c = 180 - angle_a - angle_b
 
         # sss/sas
-        if side_a is not None and side_b is not None and side_c is not None:
-            angle_a = trig.arccos((side_b**2 + side_c**2 - side_a**2) / (2 * side_b * side_c)).degrees()
-            angle_b = trig.arccos((side_a**2 + side_c**2 - side_b**2) / (2 * side_a * side_c)).degrees()
-            angle_c = 180 - angle_a - angle_b
-
-        elif side_a is not None and side_b is not None and angle_c is not None:
+        if side_a is not None and side_b is not None and angle_c is not None:
             side_c = sqrt(side_a**2 + side_b**2 - 2 * side_a * side_b * trig.cos(Degrees(angle_c).radians()))
         elif side_a is not None and side_c is not None and angle_b is not None:
             side_b = sqrt(side_a**2 + side_c**2 - 2 * side_a * side_c * trig.cos(Degrees(angle_b).radians()))
         elif side_b is not None and side_c is not None and angle_a is not None:
             side_a = sqrt(side_b**2 + side_c**2 - 2 * side_b * side_c * trig.cos(Degrees(angle_a).radians()))
 
+        if side_a is not None and side_b is not None and side_c is not None:
+            angle_a = trig.arccos((side_b**2 + side_c**2 - side_a**2) / (2 * side_b * side_c)).degrees()
+            angle_b = trig.arccos((side_a**2 + side_c**2 - side_b**2) / (2 * side_a * side_c)).degrees()
+            angle_c = 180 - angle_a - angle_b
+            
         # asa/aas
         if angle_a is not None and angle_b is not None and side_a is not None and side_b is None:
             side_b = side_a * trig.sin(Degrees(angle_b).radians()) / trig.sin(Degrees(angle_a).radians())
