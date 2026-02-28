@@ -144,7 +144,7 @@ class Inverse():
     @staticmethod
     @parseComplex
     def arccot(x: float | complex) -> Radians | complex:
-        """arccot(x) = π/2 − arctan(x)"""
+        """arccot(x) = π/2 - arctan(x)"""
         return pi / 2 - cmath.atan(x)
 
 class Hyperbolic():
@@ -153,7 +153,7 @@ class Hyperbolic():
     @staticmethod
     @parseComplex
     def sinH(x: Radians) -> float | complex:
-        """sinh(x) = (eˣ − e⁻ˣ) / 2"""
+        """sinh(x) = (eˣ - e⁻ˣ) / 2"""
         return cmath.sinh(x)
     
     @staticmethod
@@ -198,13 +198,13 @@ class InverseHyperbolic():
     @staticmethod
     @parseComplex
     def arccosH(x: float) -> float | complex:
-        """arcosh(x) = ln(x + √(x − 1)√(x + 1))"""
+        """arcosh(x) = ln(x + √(x - 1)√(x + 1))"""
         return cmath.acosh(x)
     
     @staticmethod
     @parseComplex
     def arctanH(x: float) -> float | complex:
-        """artanh(x) = ½ ln((1 + x)/(1 − x))"""
+        """artanh(x) = ½ ln((1 + x)/(1 - x))"""
         return cmath.atanh(x)
     
     @staticmethod
@@ -231,13 +231,13 @@ class Advanced():
     @staticmethod
     @parseComplex
     def versine(x: Radians) -> float | complex:
-        """versinθ = 1 − cosθ"""
+        """versinθ = 1 - cosθ"""
         return 1 - cmath.cos(x)
     
     @staticmethod
     @parseComplex
     def coversine(x: Radians) -> float | complex:
-        """coversinθ = 1 − sinθ"""
+        """coversinθ = 1 - sinθ"""
         return 1 - cmath.sin(x)
     
     @staticmethod
@@ -255,13 +255,13 @@ class Advanced():
     @staticmethod
     @parseComplex
     def haversine(x: Radians) -> float | complex:
-        """haversinθ = (1 − cosθ) / 2"""
+        """haversinθ = (1 - cosθ) / 2"""
         return (1 - cmath.cos(x)) / 2
     
     @staticmethod
     @parseComplex
     def hacoversine(x: Radians) -> float | complex:
-        """hacoversinθ = (1 − sinθ) / 2"""
+        """hacoversinθ = (1 - sinθ) / 2"""
         return (1 - cmath.sin(x)) / 2
     
     @staticmethod
@@ -279,13 +279,13 @@ class Advanced():
     @staticmethod
     @parseComplex
     def exsecant(x: Radians) -> float | complex:
-        """exsecθ = secθ − 1"""
+        """exsecθ = secθ - 1"""
         return 1 / cmath.cos(x) - 1
     
     @staticmethod
     @parseComplex
     def excosecant(x: Radians) -> float | complex:
-        """excscθ = cscθ − 1"""
+        """excscθ = cscθ - 1"""
         return 1 / cmath.sin(x) - 1
     
     @staticmethod
@@ -300,49 +300,49 @@ class InverseAdvanced():
     @staticmethod
     @parseComplex
     def arcversine(x: Radians) -> Radians | complex:
-        """arcversin(x) = arccos(1 − x)"""
+        """arcversin(x) = arccos(1 - x)"""
         return cmath.acos(1 - x)
     
     @staticmethod
     @parseComplex
     def arccoversine(x: Radians) -> Radians | complex:
-        """arccoversin(x) = arcsin(1 − x)"""
+        """arccoversin(x) = arcsin(1 - x)"""
         return cmath.asin(1 - x)
     
     @staticmethod
     @parseComplex
     def arcvercosine(x: Radians) -> Radians | complex:
-        """arcvercos(x) = arccos(x − 1)"""
+        """arcvercos(x) = arccos(x - 1)"""
         return cmath.acos(x - 1)
     
     @staticmethod
     @parseComplex
     def arccovercosine(x: Radians) -> Radians | complex:
-        """arccovercos(x) = arcsin(x − 1)"""
+        """arccovercos(x) = arcsin(x - 1)"""
         return cmath.asin(x - 1)
     
     @staticmethod
     @parseComplex
     def archaversine(x: Radians) -> Radians | complex:
-        """archaversin(x) = arccos(1 − 2x)"""
+        """archaversin(x) = arccos(1 - 2x)"""
         return cmath.acos(1 - 2 * x)
     
     @staticmethod
     @parseComplex
     def archacoversine(x: Radians) -> Radians | complex:
-        """archacoversin(x) = arcsin(1 − 2x)"""
+        """archacoversin(x) = arcsin(1 - 2x)"""
         return cmath.asin(1 - 2 * x)
     
     @staticmethod
     @parseComplex
     def archavercosine(x: Radians) -> Radians | complex:
-        """archavercos(x) = arccos(2x − 1)"""
+        """archavercos(x) = arccos(2x - 1)"""
         return cmath.acos(2 * x - 1)
     
     @staticmethod
     @parseComplex
     def archacovercosine(x: Radians) -> Radians | complex:
-        """archacovercos(x) = arcsin(2x − 1)"""
+        """archacovercos(x) = arcsin(2x - 1)"""
         return cmath.asin(2 * x - 1)
     
     @staticmethod
@@ -369,13 +369,13 @@ class HyperbolicAdvanced():
     @staticmethod
     @parseComplex
     def versineH(x: Radians) -> float | complex:
-        """versinh(x) = 1 − cosh(x)"""
+        """versinh(x) = 1 - cosh(x)"""
         return 1 - cmath.cosh(x)
     
     @staticmethod
     @parseComplex
     def coversineH(x: Radians) -> float | complex:
-        """coversinh(x) = 1 − sinh(x)"""
+        """coversinh(x) = 1 - sinh(x)"""
         return 1 - cmath.sinh(x)
     
     @staticmethod
@@ -393,13 +393,13 @@ class HyperbolicAdvanced():
     @staticmethod
     @parseComplex
     def haversineH(x: Radians) -> float | complex:
-        """haversinh(x) = (1 − cosh(x)) / 2"""
+        """haversinh(x) = (1 - cosh(x)) / 2"""
         return (1 - cmath.cosh(x)) / 2
     
     @staticmethod
     @parseComplex
     def hacoversineH(x: Radians) -> float | complex:
-        """hacoversinh(x) = (1 − sinh(x)) / 2"""
+        """hacoversinh(x) = (1 - sinh(x)) / 2"""
         return (1 - cmath.sinh(x)) / 2
     
     @staticmethod
@@ -417,13 +417,13 @@ class HyperbolicAdvanced():
     @staticmethod
     @parseComplex
     def exsecantH(x: Radians) -> float | complex:
-        """exsech(x) = sech(x) − 1"""
+        """exsech(x) = sech(x) - 1"""
         return 1 / cmath.cosh(x) - 1
     
     @staticmethod
     @parseComplex
     def excosecantH(x: Radians) -> float | complex:
-        """excsch(x) = csch(x) − 1"""
+        """excsch(x) = csch(x) - 1"""
         return 1 / cmath.sinh(x) - 1
     
     @staticmethod
@@ -438,49 +438,49 @@ class InverseHyperbolicAdvanced():
     @staticmethod
     @parseComplex
     def arcversineH(x: Radians) -> Radians | complex:
-        """arcversinh(x) = arcosh(1 − x)"""
+        """arcversinh(x) = arcosh(1 - x)"""
         return cmath.acosh(1 - x)
     
     @staticmethod
     @parseComplex
     def arccoversineH(x: Radians) -> Radians | complex:
-        """arccoversinh(x) = arsinh(1 − x)"""
+        """arccoversinh(x) = arsinh(1 - x)"""
         return cmath.asinh(1 - x)
     
     @staticmethod
     @parseComplex
     def arcvercosineH(x: Radians) -> Radians | complex:
-        """arcvercosh(x) = arcosh(x − 1)"""
+        """arcvercosh(x) = arcosh(x - 1)"""
         return cmath.acosh(x - 1)
     
     @staticmethod
     @parseComplex
     def arccovercosineH(x: Radians) -> Radians | complex:
-        """arccovercosh(x) = arsinh(x − 1)"""
+        """arccovercosh(x) = arsinh(x - 1)"""
         return cmath.asinh(x - 1)
     
     @staticmethod
     @parseComplex
     def archaversineH(x: Radians) -> Radians | complex:
-        """archaversinh(x) = arcosh(1 − 2x)"""
+        """archaversinh(x) = arcosh(1 - 2x)"""
         return cmath.acosh(1 - 2 * x)
     
     @staticmethod
     @parseComplex
     def archacoversineH(x: Radians) -> Radians | complex:
-        """archacoversinh(x) = arsinh(1 − 2x)"""
+        """archacoversinh(x) = arsinh(1 - 2x)"""
         return cmath.asinh(1 - 2 * x)
     
     @staticmethod
     @parseComplex
     def archavercosineH(x: Radians) -> Radians | complex:
-        """archavercosh(x) = arcosh(2x − 1)"""
+        """archavercosh(x) = arcosh(2x - 1)"""
         return cmath.acosh(2 * x - 1)
     
     @staticmethod
     @parseComplex
     def archacovercosineH(x: Radians) -> Radians | complex:
-        """archacovercosh(x) = arsinh(2x − 1)"""
+        """archacovercosh(x) = arsinh(2x - 1)"""
         return cmath.asinh(2 * x - 1)
     
     @staticmethod
