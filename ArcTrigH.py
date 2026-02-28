@@ -438,67 +438,67 @@ class InverseHyperbolicAdvanced():
     @staticmethod
     @parseComplex
     def arcversineH(x: Radians) -> Radians | complex:
-        """arcversinh(x) = arcosh(1 - x)"""
+        """arcversinh(x) = arccosh(1 - x)"""
         return cmath.acosh(1 - x)
     
     @staticmethod
     @parseComplex
     def arccoversineH(x: Radians) -> Radians | complex:
-        """arccoversinh(x) = arsinh(1 - x)"""
+        """arccoversinh(x) = arcsinh(1 - x)"""
         return cmath.asinh(1 - x)
     
     @staticmethod
     @parseComplex
     def arcvercosineH(x: Radians) -> Radians | complex:
-        """arcvercosh(x) = arcosh(x - 1)"""
+        """arcvercosh(x) = arccosh(x - 1)"""
         return cmath.acosh(x - 1)
     
     @staticmethod
     @parseComplex
     def arccovercosineH(x: Radians) -> Radians | complex:
-        """arccovercosh(x) = arsinh(x - 1)"""
+        """arccovercosh(x) = arcsinh(x - 1)"""
         return cmath.asinh(x - 1)
     
     @staticmethod
     @parseComplex
     def archaversineH(x: Radians) -> Radians | complex:
-        """archaversinh(x) = arcosh(1 - 2x)"""
+        """archaversinh(x) = arccosh(1 - 2x)"""
         return cmath.acosh(1 - 2 * x)
     
     @staticmethod
     @parseComplex
     def archacoversineH(x: Radians) -> Radians | complex:
-        """archacoversinh(x) = arsinh(1 - 2x)"""
+        """archacoversinh(x) = arcsinh(1 - 2x)"""
         return cmath.asinh(1 - 2 * x)
     
     @staticmethod
     @parseComplex
     def archavercosineH(x: Radians) -> Radians | complex:
-        """archavercosh(x) = arcosh(2x - 1)"""
+        """archavercosh(x) = arccosh(2x - 1)"""
         return cmath.acosh(2 * x - 1)
     
     @staticmethod
     @parseComplex
     def archacovercosineH(x: Radians) -> Radians | complex:
-        """archacovercosh(x) = arsinh(2x - 1)"""
+        """archacovercosh(x) = arcsinh(2x - 1)"""
         return cmath.asinh(2 * x - 1)
     
     @staticmethod
     @parseComplex
     def arcexsecantH(x: Radians) -> Radians | complex:
-        """arcexsech(x) = arcosh(1 / (x + 1))"""
+        """arcexsech(x) = arccosh(1 / (x + 1))"""
         return cmath.acosh(1 / (x + 1))
     
     @staticmethod
     @parseComplex
     def arcexcosecantH(x: Radians) -> Radians | complex:
-        """arcexcsch(x) = arsinh(1 / (x + 1))"""
+        """arcexcsch(x) = arcsinh(1 / (x + 1))"""
         return cmath.asinh(1 / (x + 1))
     
     @staticmethod
     @parseComplex
     def arcchordH(x: Radians) -> Radians | complex:
-        """arcchordh(x) = 2 arsinh(x / 2)"""
+        """arcchordh(x) = 2 arcsinh(x / 2)"""
         m = cmath.sqrt(2 * x**2 + 1)
         v = cmath.log((1 + m + cmath.sqrt(2 * (x**2 + m - 1))) / 2)
         if x.real < 0 or (x.real == 0 and x.imag < 0):
