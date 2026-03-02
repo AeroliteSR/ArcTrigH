@@ -15,7 +15,7 @@ class Constants:
     autoDegrees = True # automatically converts outputted Radians to Degrees for relevant inverse functions
 
     @classmethod
-    def snapshot(cls):
+    def snapshot(cls) -> dict:
         return {
             k: v
             for k, v in cls.__dict__.items()
@@ -23,8 +23,8 @@ class Constants:
         }
 
     @classmethod
-    def restore(cls, obj):
-        for key, value in obj.__dict__.items():
+    def restore(cls, obj: dict):
+        for key, value in obj.items():
             setattr(cls, key, value)
 
 P = ParamSpec("P")
@@ -575,6 +575,14 @@ class trig(Basic,
         angles = {"A": angle_a, "B": angle_b, "C": angle_c}
         backup = Constants.snapshot()
         Constants.autoDegrees, Constants.autoRadians = True, True
+        
+        # Fetch missing angle if 2 are given
+        if angle_a is None and angle_b is not None and angle_c is not None:
+            angle_a = 180 - angle_b - angle_c
+        if angle_b is None and angle_a is not None and angle_c is not None:
+            angle_b = 180 - angle_a - angle_c
+        if angle_c is None and angle_a is not None and angle_b is not None:
+            angle_c = 180 - angle_b - angle_a
 
         known_count = sum(v is not None for v in sides.values()) + \
                     sum(v is not None for v in angles.values())
@@ -591,6 +599,11 @@ class trig(Basic,
         for a in angles.values():
             if a is not None and not (0 < a < 180):
                 raise ValueError("Angles must be between 0 and 180 degrees.")
+        
+        # Fix for AAA
+        if all(s is None for s in sides.values()):
+            print("No sides given. Result will be in a ratio to a hypotenuse (c) of 1.")
+            side_c = 1
 
         # Helper aliases
         a, b, c = side_a, side_b, side_c
@@ -673,5 +686,5 @@ class trig(Basic,
         }
 
 if __name__ == "__main__":
-    print(trig.SolveTriangle(side_c=7, angle_c=90, angle_a=36))
+    print(trig.SolveTriangle(angle_b=30, angle_c=90, angle_a=60))
     
